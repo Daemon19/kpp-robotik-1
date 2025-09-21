@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include <queue>
 #include <set>
 #include <limits>
@@ -33,7 +34,7 @@ public:
     string name;
     unordered_map<string, Edge> edges;
     bool is_rest_point;
-    bool is_chargin_station;
+    bool is_charging_station;
 
     Node(string name) : name(name) {}
 };
@@ -76,7 +77,7 @@ public:
     void SetChargingStation(string name)
     {
         AddNode(name);
-        nodes.at(name).is_chargin_station = true;
+        nodes.at(name).is_charging_station = true;
     }
 
     optional<Solution> SolveShortestPath(string start, string target, int start_hour)
@@ -102,19 +103,32 @@ public:
             NodeState current = pq.top();
             pq.pop();
 
+            // Cek apakah node sudah pernah didatangi
             if (visited_nodes.find(current.name) != visited_nodes.end())
             {
                 continue;
             }
             visited_nodes.emplace(current.name);
 
+            if (nodes.at(current.name).is_rest_point && (start_hour + current.time / 60) % 2 != 0)
+            {
+                current.time = (current.time / 60 + 1) * 60;
+            }
+
+            if (nodes.at(current.name).is_charging_station)
+            {
+                current.energy_left = MAX_ENERGY;
+            }
+
             for (auto [n, e] : nodes.at(current.name).edges)
             {
                 NodeState &s = states.at(n);
 
-                
-                int energy_consumption = e.weight + e.obstacle;
-                if (current.energy_consumed + energy_consumption < s.energy_consumed)
+                double multiplier = ((start_hour + current.time / 60) % 2) ? 1.3 : 0.8;
+                int energy_consumption = (e.weight + e.obstacle) * multiplier;
+
+                if (current.energy_left >= energy_consumption &&
+                    current.energy_consumed + energy_consumption < s.energy_consumed)
                 {
                     s.energy_consumed = current.energy_consumed + energy_consumption;
                     s.energy_left = current.energy_left - energy_consumption;
