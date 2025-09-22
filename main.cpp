@@ -135,9 +135,8 @@ public:
                     s.time = current.time + TRAVEL_TIME;
                     s.path = current.path;
                     s.path.emplace_back(s.name);
+                    pq.emplace(s);
                 }
-
-                pq.emplace(s);
             }
         }
 
@@ -229,6 +228,8 @@ int main()
     vector<string> rest_points = Graph::ExtractNodeNames(line);
     for (auto name : rest_points)
     {
+        if (name == "-")
+            continue;
         graph.SetRestPoint(name);
     }
 
@@ -236,6 +237,8 @@ int main()
     vector<string> charging_stations = Graph::ExtractNodeNames(line);
     for (auto name : charging_stations)
     {
+        if (name == "-")
+            continue;
         graph.SetChargingStation(name);
     }
 
