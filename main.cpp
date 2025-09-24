@@ -1,3 +1,11 @@
+/*
+==== KPP PROGRAMMING ROBOTIK ====
+Nama        : Komang Mahatma Langendria
+NRP         : 5025251151
+Departemen  : Teknik Informatika
+Implementasi: OOP dengan algoritma path finding Djikstra
+*/
+
 #include <iostream>
 #include <cmath>
 #include <queue>
